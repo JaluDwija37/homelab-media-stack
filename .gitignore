@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+
+.DS_Store
+Thumbs.db
+
+*.log
+
+# Runtime data is mounted from the host and should not live in the repo.
+config/
+downloads/
+media/
+movies/
+tv/
+music/
