@@ -13,6 +13,8 @@ services:
       - "8080:8080"
     volumes:
       - /data/config/qbittorrent:/config
+      - /data:/data
+      # Compatibility mount for torrents that were added before the stack used /data paths.
       - /data/downloads:/downloads
 
   prowlarr:
@@ -40,8 +42,7 @@ services:
       - "7878:7878"
     volumes:
       - /data/config/radarr:/config
-      - /data/media/movies:/movies
-      - /data/downloads:/downloads
+      - /data:/data
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
@@ -55,8 +56,7 @@ services:
       - "8989:8989"
     volumes:
       - /data/config/sonarr:/config
-      - /data/media/tv:/tv
-      - /data/downloads:/downloads
+      - /data:/data
 
   lidarr:
     image: lscr.io/linuxserver/lidarr:latest
@@ -70,8 +70,7 @@ services:
       - "8686:8686"
     volumes:
       - /data/config/lidarr:/config
-      - /data/media/music:/music
-      - /data/downloads:/downloads
+      - /data:/data
 
   seerr:
     image: ghcr.io/seerr-team/seerr:latest
@@ -96,8 +95,7 @@ services:
       - "6767:6767"
     volumes:
       - /data/config/bazarr:/config
-      - /data/media/movies:/movies
-      - /data/media/tv:/tv
+      - /data:/data
 
   jellyfin:
     image: jellyfin/jellyfin:latest

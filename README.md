@@ -30,7 +30,8 @@ The stack expects these host paths:
 /data/config/seerr
 /data/config/bazarr
 /data/config/jellyfin
-/data/downloads
+/data/downloads/complete
+/data/downloads/incomplete
 /data/media/movies
 /data/media/tv
 /data/media/music
@@ -41,12 +42,14 @@ Container mounts:
 
 | Host Path | Container Path | Used By |
 |---|---|---|
-| `/data/downloads` | `/downloads` | qBittorrent, Radarr, Sonarr, Lidarr |
-| `/data/media/movies` | `/movies` | Radarr, Bazarr |
-| `/data/media/tv` | `/tv` | Sonarr, Bazarr |
-| `/data/media/music` | `/music` | Lidarr |
+| `/data` | `/data` | qBittorrent, Radarr, Sonarr, Lidarr, Bazarr |
+| `/data/downloads` | `/downloads` | qBittorrent only, compatibility for old torrents |
 | `/data/media` | `/media` | Jellyfin |
 | `/data/config/<app>` | app-specific config path | each service |
+
+Radarr, Sonarr, Lidarr, Bazarr, and qBittorrent intentionally share the same `/data` mount. This keeps downloads and media libraries on the same visible filesystem path inside the containers, so Arr imports can use hardlinks instead of creating duplicate full-size copies.
+
+qBittorrent also keeps a compatibility `/downloads` mount for torrents that were added before the migration to `/data`. New downloads should still use `/data/downloads/complete` and `/data/downloads/incomplete`.
 
 ## Requirements
 
@@ -82,7 +85,8 @@ Container mounts:
      /data/config/seerr \
      /data/config/bazarr \
      /data/config/jellyfin \
-     /data/downloads \
+     /data/downloads/complete \
+     /data/downloads/incomplete \
      /data/media/movies \
      /data/media/tv \
      /data/media/music
@@ -111,7 +115,8 @@ Container mounts:
 
 ### qBittorrent
 
-- Set the download path to `/downloads`.
+- Set the completed download path to `/data/downloads/complete`.
+- Set the incomplete download path to `/data/downloads/incomplete`.
 - Connect Radarr/Sonarr/Lidarr to qBittorrent using the Docker service/container host if they share a network, or the host IP if configured externally.
 
 ### Prowlarr
@@ -121,24 +126,24 @@ Container mounts:
 
 ### Radarr
 
-- Root folder: `/movies`.
+- Root folder: `/data/media/movies`.
 - Download client category recommendation: `radarr`.
 
 ### Sonarr
 
-- Root folder: `/tv`.
+- Root folder: `/data/media/tv`.
 - Download client category recommendation: `sonarr`.
 
 ### Lidarr
 
-- Root folder: `/music`.
+- Root folder: `/data/media/music`.
 - Download client category recommendation: `lidarr`.
 
 ### Bazarr
 
 - Connect Bazarr to Radarr and Sonarr.
-- Movies path: `/movies`.
-- TV path: `/tv`.
+- Movies path: `/data/media/movies`.
+- TV path: `/data/media/tv`.
 
 ### Jellyfin
 
